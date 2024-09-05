@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import firebaseconfig from './firebaseConfig'
+import firebaseconfig from './firebase_config'
 import {
  FirebaseAppProvider
 }from 'reactfire'
