@@ -11,7 +11,7 @@ import {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render((
   <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-    <Suspense>
+    <Suspense fallback={'conetando...'}>
       <React.StrictMode>
         <App />
       </React.StrictMode>
