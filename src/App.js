@@ -7,7 +7,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          preguntas?<code>Entonces para esto es el app</code> diego
+          preguntas?<code>Cambios firebase</code> por alan
         </p>
         <a
           className="App-link"
