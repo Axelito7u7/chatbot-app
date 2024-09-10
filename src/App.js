@@ -1,18 +1,20 @@
+import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import{
-  useFirebaseApp
-} from'reactfire';
+import { useFirebaseApp } from 'reactfire';
+import HubSpotTracking from './recursos/HubSpotTracking'; // Asegúrate de que la ruta sea correcta
 
 function App() {
   const firebase = useFirebaseApp();
   console.log(firebase);
+
   return (
     <div className="App">
+      <HubSpotTracking />
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Mi app<code> hecha por</code> Alan connection for fireabse 
+          Mi app<code> hecha por</code> Alan connection for firebase 
         </p>
         <a
           className="App-link"
