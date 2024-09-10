@@ -3,7 +3,7 @@ import './App.css';
 import{
   useFirebaseApp
 } from'reactfire';
-import HubSpotTracking from './components/HubSpotTracking'; // Asegúrate de que la ruta sea correcta
+import HubSpotTracking from './recursos/HubSpotTracking'; // Asegúrate de que la ruta sea correcta
 
 function App() {
   const firebase = useFirebaseApp();
