@@ -14,7 +14,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Mi app<code> hecha por</code> Alan connection for firebase 
+          Mi app<code> de bot</code> Alan connection for firebase 
         </p>
         <a
           className="App-link"
