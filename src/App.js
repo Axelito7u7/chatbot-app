@@ -1,8 +1,9 @@
-import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { useFirebaseApp } from 'reactfire';
-import HubSpotTracking from './recursos/HubSpotTracking'; // Asegúrate de que la ruta sea correcta
+import{
+  useFirebaseApp
+} from'reactfire';
+import HubSpotTracking from './components/HubSpotTracking'; // Asegúrate de que la ruta sea correcta
 
 function App() {
   const firebase = useFirebaseApp();
@@ -14,7 +15,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Mi app<code> de bot</code> Alan connection for firebase 
+          Mi app<code> hecha por</code> Alan connection for firebase 
         </p>
         <a
           className="App-link"
