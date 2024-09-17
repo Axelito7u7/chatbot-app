@@ -1,15 +1,15 @@
 import './index.css'; // O './App.css' si es donde lo estás importando
 import './App.css';
 import './output.css';
-import Headers from './componentes/header';
-import Banners from './componentes/banner';
+
+import DashBoard from './componentes/dashBoard';
+import Product from './componentes/productos';
 
 function App() {
   return (
     <div>
-      <Headers/> {}
-      <Banners/>{}
-      
+      <DashBoard/>{}
+      <Product/>{}
     </div>
   );
 }
