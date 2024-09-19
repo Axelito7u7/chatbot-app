@@ -1,4 +1,5 @@
-export default {
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
     apiKey: "AIzaSyAe5xaVV0uyTfoKLcQcOw-jYYaA12i8aug",
     authDomain: "chatbot-d9174.firebaseapp.com",
     projectId: "chatbot-d9174",

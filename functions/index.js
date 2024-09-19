@@ -1,5 +1,8 @@
+//const {onRequest} = require("firebase-functions/v2/https");
+//const logger = require("firebase-functions/logger");
+
 const functions = require("firebase-functions");
-const { WebhookClient, Payload } = require("dialogflow-fulfillment");
+const { WebhookClient} = require("dialogflow-fulfillment");
 
 exports.chatbot = functions.https.onRequest((request, response) => {
     console.log("req*********:", request.body);

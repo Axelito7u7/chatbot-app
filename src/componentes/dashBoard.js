@@ -1,46 +1,39 @@
-import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import BannerWithCarousel from './banner'; // Ajusta esta ruta según la ubicación
 
 const user = {
   name: 'Tom Cook',
   email: 'tom@example.com',
-  imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-}
+  imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+};
 const navigation = [
   { name: 'Inicio', href: '#', current: true },
   { name: 'Promociones', href: '#', current: false },
-  { name: 'Prodocutos', href: '#', current: false },
+  { name: 'Productos', href: '#', current: false },
   { name: 'Equipo', href: '#', current: false },
   { name: 'Acerca de nosotros', href: '#', current: false },
-]
+];
 const userNavigation = [
   { name: 'Tu perfil', href: '#' },
-  { name: 'Configuaracion', href: '#' },
-  { name: 'cerrar seccion', href: '#' },
-]
+  { name: 'Configuración', href: '#' },
+  { name: 'Cerrar sesión', href: '#' },
+];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(' ');
 }
 
-export default function DashBoard(){
+export default function DashBoard() {
   return (
     <>
-      {
-        
-       }
       <div className="min-h-full">
         <Disclosure as="nav" className="bg-gray-800">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <img
-                    alt="Your Company"
-                    src="/imagenes/logo.png"
-                    className="h-8 w-8"
-                  />
+                  <img alt="Your Company" src="/imagenes/logo.png" className="h-8 w-8" />
                 </div>
                 <div className="hidden md:block">
                   <div className="ml-10 flex items-baseline space-x-4">
@@ -160,16 +153,15 @@ export default function DashBoard(){
             </div>
           </DisclosurePanel>
         </Disclosure>
+        
+        <BannerWithCarousel /> {/* Banner component here */}
 
-        <header className="bg-white shadow">
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <center><h1 className="text-3xl font-bold tracking-tight text-gray-900">Bienvenidos a E-commers</h1></center>
-          </div>
-        </header>
         <main>
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">{/* Your content */}</div>
+          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            {/* Your content */}
+          </div>
         </main>
       </div>
     </>
-  )
+  );
 }
