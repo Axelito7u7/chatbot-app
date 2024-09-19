@@ -1,12 +1,16 @@
+import React from 'react';
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import BannerWithCarousel from './banner'; // Ajusta esta ruta según la ubicación
+import ChatBot from './chatbot'; // Importa el componente ChatBot
+import Product from './productos'; // Importa el componente Product
 
 const user = {
   name: 'Tom Cook',
   email: 'tom@example.com',
   imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 };
+
 const navigation = [
   { name: 'Inicio', href: '#', current: true },
   { name: 'Promociones', href: '#', current: false },
@@ -14,6 +18,7 @@ const navigation = [
   { name: 'Equipo', href: '#', current: false },
   { name: 'Acerca de nosotros', href: '#', current: false },
 ];
+
 const userNavigation = [
   { name: 'Tu perfil', href: '#' },
   { name: 'Configuración', href: '#' },
@@ -153,14 +158,17 @@ export default function DashBoard() {
             </div>
           </DisclosurePanel>
         </Disclosure>
-        
-        <BannerWithCarousel /> {/* Banner component here */}
 
+        <BannerWithCarousel /> {/* Banner component here */}
+        
         <main>
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             {/* Your content */}
+            <Product /> {/* Aquí se integra el componente Product */}
           </div>
         </main>
+
+        <ChatBot /> {/* Integración del componente ChatBot */}
       </div>
     </>
   );
