@@ -1,0 +1,261 @@
+PS C:\Users\Wendy\Desktop\nombre-del-proyecto> npm install firebase
+added 63 packages, and audited 1606 packages in 8m
+
+262 packages are looking for funding
+  run `npm fund` for details
+
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+PS C:\Users\Wendy\Desktop\nombre-del-proyecto> npm install --g firebase-tools        
+
+changed 633 packages in 6m
+
+70 packages are looking for funding
+  run `npm fund` for details
+
+PS C:\Users\Wendy\Desktop\nombre-del-proyecto> npm install --g firebase-tools
+
+changed 633 packages in 13m
+
+70 packages are looking for funding
+  run `npm fund` for details
+-g firebase-tools
+
+changed 633 packages in 13m
+
+70 packages are looking for funding
+  run `npm fund` for details
+
+  PS C:\Users\Wendy\Desktop\nombre-del-proyecto> firebase login
+Already logged in as galvanflores102@gmail.com
+
+PS C:\Users\Wendy\Desktop\nombre-del-proyecto> firebase init
+
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##      
+     ######    ##  ########  ######   ########  #########  ######  ######  
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##      
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\Wendy\Desktop\nombre-del-proyecto
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+? Are you ready to proceed? Yes
+? Which Firebase features do you want to set up for this directory? Press Space to select features, then Enter to confirm your   
+choices. Firestore: Configure security rules and indexes files for Firestore, Functions: Configure a Cloud Functions directory   
+and its files, Hosting: Configure files for Firebase Hosting and (optionally) set up GitHub Action deploys, Storage: Configure a 
+security rules file for Cloud Storage
+
+=== Project Setup
+
+First, let's associate this project directory with a Firebase project.
+You can create multiple project aliases by running firebase use --add,
+but for now we'll just set up a default project.
+
+i  Using project chatbot-d9174 (chatbot)
+
+=== Firestore Setup
+
+Firestore Security Rules allow you to define how and when to allow
+requests. You can keep these rules in your project directory
+and publish them with firebase deploy.
+
+? What file should be used for Firestore Rules? firestore.rules
+
+Firestore indexes allow you to perform complex queries while
+maintaining performance that scales with the size of the result
+set. You can keep index definitions in your project directory
+and publish them with firebase deploy.
+
+? What file should be used for Firestore indexes? firestore.indexes.json
+? File firestore.indexes.json already exists. Do you want to overwrite it with the Firestore Indexes from the Firebase Console? 
+Yes
+
+=== Functions Setup
+
+Detected existing codebase(s): default
+
+? Would you like to initialize a new codebase, or overwrite an existing one? Overwrite
+
+Overwriting codebase default...
+
+? What language would you like to use to write Cloud Functions? JavaScript
+? Do you want to use ESLint to catch probable bugs and enforce style? No
++  Wrote functions/package.json
++  Wrote functions/index.js
++  Wrote functions/.gitignore
+? Do you want to install dependencies with npm now? Yes
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+
+added 491 packages, and audited 492 packages in 5m
+
+51 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+=== Hosting Setup
+
+Your public directory is the folder (relative to your project directory) that
+will contain Hosting assets to be uploaded with firebase deploy. If you
+have a build process for your assets, use your build's output directory.
+
+? What do you want to use as your public directory? public
+? Configure as a single-page app (rewrite all urls to /index.html)? Yes
+? Set up automatic builds and deploys with GitHub? No
+? File public/index.html already exists. Overwrite? No
+i  Skipping write of public/index.html
+
+=== Storage Setup
+
+Firebase Storage Security Rules allow you to define how and when to allow
+uploads and downloads. You can keep these rules in your project directory
+and publish them with firebase deploy.
+
+? What file should be used for Storage Rules? storage.rules
++  Wrote storage.rules
+
+i  Writing configuration info to firebase.json...
+i  Writing project information to .firebaserc...
+
++  Firebase initialization complete!
+PS C:\Users\Wendy\Desktop\nombre-del-proyecto> 
+
+PS C:\Users\Wendy\Desktop\nombre-del-proyecto> npm run build  
+
+> nombre-del-proyecto@0.1.0 build
+> react-scripts build
+
+Creating an optimized production build...
+One of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it may break at any time.
+
+babel-preset-react-app is part of the create-react-app project, which
+is not maintianed anymore. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.
+
+Compiled successfully.
+
+File sizes after gzip:
+
+  46.59 kB  build\static\js\main.a120d79b.js
+  1.78 kB   build\static\js\453.86d432cf.chunk.js
+  513 B     build\static\css\main.f855e6bc.css
+
+The project was built assuming it is hosted at /.
+You can control this with the homepage field in your package.json.
+
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  serve -s build
+
+Find out more about deployment here:
+
+  https://cra.link/deployment
+
+Antes de copilar el firebase deploy tenemos que cambiar el firebase.json 
+
+ "hosting": 
+    "public": "public", debemos cambiarlo a build 
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+
+ "hosting": 
+    "public": "build", Asi debe de quedar
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+
+PS C:\Users\Wendy\Desktop\nombre-del-proyecto> firebase deploy
+
+=== Deploying to 'chatbot-d9174'...
+
+i  deploying storage, firestore, functions, hosting
+i  storage: ensuring required API firebasestorage.googleapis.com is enabled...
++  storage: required API firebasestorage.googleapis.com is enabled
+i  firebase.storage: checking storage.rules for compilation errors...
++  firebase.storage: rules file storage.rules compiled successfully
+i  firestore: reading indexes from firestore.indexes.json...
+i  cloud.firestore: checking firestore.rules for compilation errors...
++  cloud.firestore: rules file firestore.rules compiled successfully
+i  functions: preparing codebase default for deployment
+i  functions: ensuring required API cloudfunctions.googleapis.com is enabled...
+i  functions: ensuring required API cloudbuild.googleapis.com is enabled...
+i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled...
++  functions: required API cloudbuild.googleapis.com is enabled
++  functions: required API cloudfunctions.googleapis.com is enabled
++  artifactregistry: required API artifactregistry.googleapis.com is enabled
+!  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory.
+!  functions: Please note that there will be breaking changes when you upgrade.
+i  functions: Loading and analyzing source code for codebase default to determine what to deploy
+Serving at port 8438
+
+i  functions: preparing functions directory for uploading...
+i  functions: packaged C:\Users\Wendy\Desktop\nombre-del-proyecto\functions (61.36 KB) for uploading
+i  functions: ensuring required API run.googleapis.com is enabled...
+i  functions: ensuring required API eventarc.googleapis.com is enabled...
+i  functions: ensuring required API pubsub.googleapis.com is enabled...
+i  functions: ensuring required API storage.googleapis.com is enabled...
++  functions: required API eventarc.googleapis.com is enabled
++  functions: required API pubsub.googleapis.com is enabled
++  functions: required API storage.googleapis.com is enabled
++  functions: required API run.googleapis.com is enabled
+i  functions: generating the service identity for pubsub.googleapis.com...
+i  functions: generating the service identity for eventarc.googleapis.com...
+i  storage: latest version of storage.rules already up to date, skipping upload...
+i  firestore: deploying indexes...
+i  firestore: latest version of firestore.rules already up to date, skipping upload...
++  firestore: deployed indexes in firestore.indexes.json successfully for (default) database
++  functions: functions folder uploaded successfully
+i  hosting[chatbot-d9174]: beginning deploy...
+i  hosting[chatbot-d9174]: found 15 files in build
++  hosting[chatbot-d9174]: file upload complete
++  storage: released rules storage.rules to firebase.storage
++  firestore: released rules firestore.rules to cloud.firestore
+
+The following functions are found in your project but do not exist in your local source code:
+        chatbosito(us-central1)
+
+If you are renaming a function or changing its region, it is recommended that you create the new function first before deleting the old one to prevent event loss. For more info, visit https://firebase.google.com/docs/functions/manage-functions#modify        
+
+? Would you like to proceed with deletion? Selecting no will continue the rest of the deployments. Yes
+i  functions: creating Node.js 18 (2nd Gen) function helloWorld(us-central1)...
+i  functions: deleting Node.js 18 (2nd Gen) function chatbosito(us-central1)...
++  functions[chatbosito(us-central1)] Successful delete operation.
++  functions[helloWorld(us-central1)] Successful create operation.
+Function URL (helloWorld(us-central1)): https://helloworld-bykrh62htq-uc.a.run.app
+i  functions: cleaning up build files...
+!  functions: Unhandled error cleaning up build images. This could result in a small monthly bill if not corrected. You can attempt to delete these images by redeploying or you can delete them manually at https://console.cloud.google.com/gcr/images/chatbot-d9174/us/gcf
+i  hosting[chatbot-d9174]: finalizing version...
++  hosting[chatbot-d9174]: version finalized
+i  hosting[chatbot-d9174]: releasing new version...
++  hosting[chatbot-d9174]: release complete
+
++  Deploy complete!
+
+Project Console: https://console.firebase.google.com/project/chatbot-d9174/overview
+Hosting URL: https://chatbot-d9174.web.app
+
+creamos un .env para cambiar de puerto para correr el npm run start
+
+

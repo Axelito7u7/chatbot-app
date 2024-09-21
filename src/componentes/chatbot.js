@@ -4,6 +4,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 
 
 
+
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false); // Estado para controlar si el chatbot está abierto
 

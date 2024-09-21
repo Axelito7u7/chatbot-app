@@ -1,24 +1,15 @@
-import React, { Suspense }from 'react'; 
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import firebaseConfig from './firebase_config'
-import {
- FirebaseAppProvider
-}from 'reactfire'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render((
-  <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-    <Suspense fallback={'conetando...'}>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    </Suspense>
-  </FirebaseAppProvider>
-
-));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
