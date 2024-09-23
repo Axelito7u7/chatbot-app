@@ -287,31 +287,3 @@ To address issues that do not require attention, run:
 Some issues need review, and may require choosing
 
 Run `npm audit` for details.
-PS C:\Users\Wendy\Desktop\chatbot-app\functions> npm install actions-on-google
->>
-npm warn ERESOLVE overriding peer dependency
-npm warn While resolving: functions@undefined
-npm warn Found: actions-on-google@2.14.0
-npm warn node_modules/actions-on-google
-npm warn   peer actions-on-google@"^2.4.1" from dialogflow-fulfillment@0.6.1
-npm warn   node_modules/dialogflow-fulfillment
-npm warn     dialogflow-fulfillment@"^0.6.1" from the root project
-npm warn   1 more (the root project)
-npm warn
-npm warn Could not resolve dependency:
-npm warn peer actions-on-google@"^2.4.1" from dialogflow-fulfillment@0.6.1
-npm warn node_modules/dialogflow-fulfillment
-npm warn   dialogflow-fulfillment@"^0.6.1" from the root project
-npm warn EBADENGINE Unsupported engine {
-npm warn EBADENGINE   package: 'dialogflow-fulfillment@0.6.1',
-npm warn EBADENGINE   required: { node: '6' },
-npm warn EBADENGINE   current: { node: 'v18.20.4', npm: '10.7.0' }
-npm warn EBADENGINE }
-npm warn deprecated google-p12-pem@3.1.4: Package is no longer maintained
-
-added 8 packages, removed 23 packages, changed 30 packages, and audited 539 packages in 58s
-
-51 packages are looking for funding
-  run `npm fund` for details
-
-found 0 vulnerabilities
