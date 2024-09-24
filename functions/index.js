@@ -28,12 +28,11 @@ exports.chatbot = functions.https.onRequest((request, response) =>{
     console.log("Dialgoflow Request body: "+ JSON.stringify(request.body));
 
     function Welcome(agent){
-        agent.add('Welcome to my agent! Firebase Functions');
+        agent.add('Hola bienvenido, Soy chatbotsito en que te puedo ayudar');
     }
 
     function Fallback(agent){
-        agent.add('I dind´t understand');
-        agent.add('I´m sorry, can you try again?');
+        agent.add('Lo siento no entendi, Lo puedes repetir?');
     }
 
     let intenMap = new Map();
