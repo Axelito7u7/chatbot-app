@@ -1,7 +1,6 @@
 const functions = require("firebase-functions");
-const { WebhookClient } = require("dialogflow-fulfillment");
+const { WebhookClient} = require("dialogflow-fulfillment");
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 
 admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -12,6 +11,7 @@ const db = admin.firestore();
 
 exports.chatbot = functions.https.onRequest((request, response) => {
     const agent = new WebhookClient({ request, response });
+
 
     function MostrarCategorias(agent) {
         const categoriasRef = db.collection("Categorias");
@@ -29,7 +29,7 @@ exports.chatbot = functions.https.onRequest((request, response) => {
     }
 
     let intentMap = new Map();
-
     intentMap.set("MostrarCategorias", MostrarCategorias);
+
     agent.handleRequest(intentMap);
 });
