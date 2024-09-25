@@ -287,3 +287,11 @@ To address issues that do not require attention, run:
 Some issues need review, and may require choosing
 
 Run `npm audit` for details.
+
+En este paso empezamos a crear funciones simples las cuales llamamos al dialgflow las funciones estan en functions/index.js
+
+cuando terminamos de editar un funcion se van a cd functions para estar dentro de esta carpeta y solo usan el comando
+
+firebase deploy 
+firebase deploy --only functions 
+
