@@ -9,10 +9,6 @@ import Footer from './componentes/footer';
 function App() {
   return (
     <div>
-      <header>
-        {}
-        <img src={logo} alt="Logo" className="App-logo" /> {}
-      </header>
       <DashBoard />
       <Footer />
     </div>
