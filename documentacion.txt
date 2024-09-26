@@ -295,3 +295,112 @@ cuando terminamos de editar un funcion se van a cd functions para estar dentro d
 firebase deploy 
 firebase deploy --only functions 
 
+para subir los cambios el Hosting de firebase debes poner primero 
+
+PS C:\Users\Wendy\Desktop\chatbot-app> npm run build
+>>
+
+> chatbot-app@0.1.0 build
+> react-scripts build
+
+Creating an optimized production build...
+One of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it may break at any time.
+
+babel-preset-react-app is part of the create-react-app project, which
+is not maintianed anymore. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.
+
+Compiled with warnings.
+
+[eslint] 
+src\componentes\footer.js
+  Line 19:17:  The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use 
+a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+  Line 22:17:  The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use 
+a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+  Line 25:17:  The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use 
+a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+  Line 28:17:  The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use 
+a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+  Line 35:15:  The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use 
+a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+  Line 40:15:  The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use 
+a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+  Line 45:15:  The href attribute requires a valid value to be accessible. Provide a valid, navigable address as the href value. If you cannot provide a valid href, but still need the element to resemble a link, use 
+a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+File sizes after gzip:
+
+  78.2 kB (-1.27 kB)  build\static\js\main.73b6aeda.js
+  4.3 kB              build\static\css\main.dcd56967.css
+  1.77 kB             build\static\js\453.78b945df.chunk.js
+
+The project was built assuming it is hosted at /.
+You can control this with the homepage field in your package.json.
+
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  serve -s build
+
+Find out more about deployment here:
+
+  https://cra.link/deployment
+
+PS C:\Users\Wendy\Desktop\chatbot-app> firebase deploy
+
+=== Deploying to 'chatbot-d9174'...
+
+i  deploying storage, firestore, functions, hosting
+i  storage: ensuring required API firebasestorage.googleapis.com is enabled...
++  storage: required API firebasestorage.googleapis.com is enabled
+i  firebase.storage: checking storage.rules for compilation errors...
++  firebase.storage: rules file storage.rules compiled successfully
+i  firestore: reading indexes from firestore.indexes.json...
+i  cloud.firestore: checking firestore.rules for compilation errors...
++  cloud.firestore: rules file firestore.rules compiled successfully
+i  functions: preparing codebase default for deployment
+i  functions: ensuring required API cloudfunctions.googleapis.com is enabled...
+i  functions: ensuring required API cloudbuild.googleapis.com is enabled...
+i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled...
++  functions: required API cloudbuild.googleapis.com is enabled
++  functions: required API cloudfunctions.googleapis.com is enabled
++  artifactregistry: required API artifactregistry.googleapis.com is enabled
+!  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory.
+!  functions: Please note that there will be breaking changes when you upgrade.
+i  functions: Loading and analyzing source code for codebase default to determine what to deploy
+Serving at port 8713
+
+i  functions: preparing functions directory for uploading...
+i  functions: packaged C:\Users\Wendy\Desktop\chatbot-app\functions (69.41 KB) for uploading
+i  storage: latest version of storage.rules already up to date, skipping upload...
+i  firestore: deploying indexes...
+i  firestore: latest version of firestore.rules already up to date, skipping upload...
++  firestore: deployed indexes in firestore.indexes.json successfully for (default) database
+i  hosting[chatbot-d9174]: beginning deploy...
+i  hosting[chatbot-d9174]: found 15 files in build
++  hosting[chatbot-d9174]: file upload complete
++  storage: released rules storage.rules to firebase.storage
++  firestore: released rules firestore.rules to cloud.firestore
+i  functions: Skipping the deploy of unchanged functions.
++  functions[chatbot(us-central1)] Skipped (No changes detected)
+i  functions: cleaning up build files...
+!  functions: Unhandled error cleaning up build images. This could result in a small monthly bill if not corrected. You can attempt to delete these images by redeploying or you can delete them manually at https://console.cloud.google.com/gcr/images/chatbot-d9174/us/gcf
+i  hosting[chatbot-d9174]: finalizing version...
++  hosting[chatbot-d9174]: version finalized
+i  hosting[chatbot-d9174]: releasing new version...
++  hosting[chatbot-d9174]: release complete
+
++  Deploy complete!
+
+Project Console: https://console.firebase.google.com/project/chatbot-d9174/overview
+Hosting URL: https://chatbot-d9174.web.app

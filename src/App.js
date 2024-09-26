@@ -1,17 +1,20 @@
-import './index.css'; // O './App.css' si es donde lo estás importando
+import logo from './imagenes/logo.png'; // Asegúrate de que la ruta sea correcta
+import './index.css';
 import './App.css';
 import './output.css';
 
 import DashBoard from './componentes/dashBoard';
 import Footer from './componentes/footer';
-//import Chatbot from './componentes/chatbot';
 
 function App() {
   return (
     <div>
-     <DashBoard/>{}
-     <Footer/>{}
-
+      <header>
+        {}
+        <img src={logo} alt="Logo" className="App-logo" /> {}
+      </header>
+      <DashBoard />
+      <Footer />
     </div>
   );
 }
