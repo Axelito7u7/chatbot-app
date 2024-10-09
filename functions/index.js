@@ -9,6 +9,34 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
+// Función para manejar el webhook de Tawk.to
+exports.tawkWebhook = functions.https.onRequest((request, response) => {
+    const { secretKey, event, message } = request.body; // Asegúrate de que tu webhook envíe el mensaje y la clave
+
+    // Verificar la clave secreta
+    if (secretKey !== '2a1459b9965eb1590eed0b788c6e48873cf0f6a0a088d67f3407a342a3dad9b63f97e06e3a05520fa01df219139331db') {
+        return response.status(403).send('Forbidden'); // Clave incorrecta
+    }
+
+    // Procesar el evento de inicio de chat
+    if (event === 'Chat Start') {
+        const agent = new WebhookClient({ request, response });
+        const userMessage = message; // Mensaje del usuario
+
+        // Aquí puedes implementar la lógica para enviar el mensaje a Dialogflow y obtener la respuesta
+        const intentMap = new Map();
+        intentMap.set('Default Welcome Intent', (agent) => {
+            agent.add("¡Hola! ¿En qué puedo ayudarte?");
+        });
+        // Agrega otras intenciones que quieras manejar
+
+        agent.handleRequest(intentMap);
+    } else {
+        response.status(400).send('Bad Request: Unsupported event type'); // Evento no soportado
+    }
+});
+
+// Función principal del chatbot
 exports.chatbot = functions.https.onRequest((request, response) => {
     const agent = new WebhookClient({ request, response });
 
