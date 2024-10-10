@@ -1,16 +1,14 @@
-import logo from './imagenes/logo.png'; // Asegúrate de que la ruta sea correcta
+
 import './index.css';
 import './App.css';
 import './output.css';
 
-import DashBoard from './componentes/dashBoard';
-import Footer from './componentes/footer';
+import AppRouter from './routes';
 
 function App() {
   return (
-    <div>
-      <DashBoard />
-      <Footer />
+    <div className="Aplicacion">
+      <AppRouter />
     </div>
   );
 }

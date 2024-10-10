@@ -404,3 +404,7 @@ i  hosting[chatbot-d9174]: releasing new version...
 
 Project Console: https://console.firebase.google.com/project/chatbot-d9174/overview
 Hosting URL: https://chatbot-d9174.web.app
+
+Para enrutar las paginas decargamos la paqueteria de Routers
+
+debemos cambiar el index.js y el app.js

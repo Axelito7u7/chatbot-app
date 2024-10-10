@@ -1,31 +1,24 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getFirestore } from "firebase/firestore"; // Importar Firestore
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyD-sVDItNU-6BHaqhmqAiiyUTEditNcA7o",
-  authDomain: "chatbotsito-7deb6.firebaseapp.com",
-  projectId: "chatbotsito-7deb6",
-  storageBucket: "chatbotsito-7deb6.appspot.com",
-  messagingSenderId: "511212019411",
-  appId: "1:511212019411:web:d9d2c4e2f6ff3a2150fe26",
-  measurementId: "G-HB0YYW6H45",
+  apiKey: "AIzaSyAe5xaVV0uyTfoKLcQcOw-jYYaA12i8aug",
+  authDomain: "chatbot-d9174.firebaseapp.com",
+  projectId: "chatbot-d9174",
+  storageBucket: "chatbot-d9174.appspot.com",
+  messagingSenderId: "278828509732",
+  appId: "1:278828509732:web:194b1d15fbe1ba079f06b1",
+  measurementId: "G-G9S3H42KS0"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-//npm install firebase
+// Initialize Firestore
+const db = getFirestore(app); // Inicializa Firestore
 
-//npm install -g firebase-tools
-
-//firebase login
-
-//firebase init
-
-//firebase deploy
+export { db }; // Exporta db para usar en otros archivos
