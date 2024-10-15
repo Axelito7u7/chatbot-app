@@ -11,7 +11,7 @@ export default function ChatbotCRMTable() {
   const formatFirestoreDate = (timestamp) => {
     if (!timestamp) return "";
     const date = new Date(timestamp.seconds * 1000);
-    return date.toLocaleString(); // Formato legible
+    return date.toLocaleString(); 
   };
 
   useEffect(() => {
