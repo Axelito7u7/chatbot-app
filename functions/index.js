@@ -111,46 +111,85 @@ exports.chatbot = functions.https.onRequest((request, response) => {
         }
     }
 
-    // Función para solicitar la información del usuario y guardarla en Firestore
-    async function requestUserInfo(agent) {
-        const name = agent.parameters['given-name'];
-        const email = agent.parameters.email;
+async function requestEmail(agent) {
+    const email = agent.parameters.email;
+    const fechaActual = new Date(); 
 
-        // Validar si ya tenemos la información necesaria
-        if (!email) {
-            agent.add("Por favor, proporciona tu correo electrónico para continuar.");
+    // Validar si el correo es proporcionado
+    if (!email) {
+        agent.add("Por favor, proporciona tu correo electrónico para continuar.");
+        return;
+    }
+
+    // Validar si el correo tiene un formato válido
+    if (!isValidEmail(email)) {
+        agent.add("Por favor, proporciona un correo electrónico válido.");
+        return;
+    }
+
+    try {
+        const snapshot = await db.collection("Cliente").where("email", "==", email).get();
+
+        if (snapshot.empty) {
+            agent.add("Correo no registrado, ¿me podrías decir tu nombre?");
+        } else {
+
+            await db.collection("Cliente").doc(snapshot.docs[0].id).update({
+                ultima_interaccion: fechaActual
+            });
+            agent.setFollowupEvent('Saludar');
+
+        }
+
+    } catch (error) {
+        console.error("Error al verificar el correo: ", error.message);
+        agent.add("Lo siento, hubo un error al procesar tu información.");
+    }
+}
+
+
+    // Intent para capturar el nombre 
+    async function requestName(agent) {
+        const name = agent.parameters['given-name']; // Recoge el nombre proporcionado
+        const email = agent.parameters.email; // Recoge el correo directamente del parámetro
+        const fechaActual = new Date();
+
+        // Verifica si guarda
+        if (!name || name.trim() === "") {
+            agent.add("No he entendido tu nombre, ¿puedes repetirlo?");
             return;
         }
 
-        if (!isValidEmail(email)) {
-            agent.add("Por favor, proporciona un correo electrónico válido.");
-            return;
-        }
+        // Registrar nuevo usuario en Firestore
+        const newUser = {
+            nombre: name,
+            email: email,
+            motivo: "Pedido", 
+            fecha: fechaActual,
+            ultima_interaccion: fechaActual
+        };
 
         try {
-            const snapshot = await db.collection("Cliente").where("email", "==", email).get();
+            await db.collection("Cliente").add(newUser);
 
-            if (!snapshot.empty) {
-                const userData = snapshot.docs[0].data();
-                agent.add(`Hola ${userData.nombre}, Bienvenido otra vez`);
-            } else {
-                agent.add(`Gracias ya te registre ${userData.nombre}.`);
-                agent.context.set({ name: "awaiting_user_info", lifespan: 2 });
-            }
+            agent.add(`Gracias ${newUser.nombre}, te hemos registrado con éxito.`);
+            // Dispara el evento 'Saludar'
+            agent.setFollowupEvent('Saludar');
+            console.log("Evento Saludar disparado después de registrar el nuevo usuario.");
 
         } catch (error) {
-            console.error("Error al guardar o verificar datos:", error);
-            agent.add("Lo siento, hubo un error al procesar tu información.");
+            console.error("Error al registrar usuario: ", error.message);
+            agent.add("Lo siento, hubo un error al registrar tu información.");
         }
     }
 
-    // Función para manejar el Default Welcome Intent
     function welcome(agent) {
         agent.add("¡Hola! Bienvenido al servicio. Por favor, proporciona tu correo electrónico para continuar.");
     }
 
     let intentMap = new Map();
-    intentMap.set("PedirNombreCorreo", requestUserInfo);
+    intentMap.set("PedirCorreo", requestEmail);  
+    intentMap.set("PedirNombre", requestName);  
     intentMap.set("Default Welcome Intent", welcome);
     intentMap.set("MostrarCategorias", MostrarCategorias);
     intentMap.set("ConsultarPedido", consultarPedido);
@@ -158,6 +197,7 @@ exports.chatbot = functions.https.onRequest((request, response) => {
     agent.handleRequest(intentMap);
 });
 
+// Función para validar un correo electrónico
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
