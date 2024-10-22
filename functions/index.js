@@ -102,15 +102,27 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
                     });
                 } else {
                     // Procesa el usuario encontrado
-                    const user = snapshot.docs[0].data();
+                    const userDoc = snapshot.docs[0]; // Obtiene el documento
+                    const user = userDoc.data();
                     agent.add(`Hola ${user.nombre}, bienvenido de nuevo.`);
+                    agent.setFollowupEvent({ name: 'Saludar', parameters: {} });
+                    const fechaActual = admin.firestore.Timestamp.now();
+                    return userDoc.ref.update({
+                        ultima_interaccion: fechaActual
+                    });
+                    
+                    
                 }
+            })
+            .then(() => {
+               
             })
             .catch(error => {
                 console.error("Error al buscar usuario:", error);
                 agent.add("Hubo un error al procesar tu solicitud.");
             });
     }
+    
     
     async function requestName(agent) {
         const name = agent.parameters['given-name'];
