@@ -1,134 +1,122 @@
-const functions = require("firebase-functions");
-const { WebhookClient } = require("dialogflow-fulfillment");
-const admin = require("firebase-admin");
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const { WebhookClient } = require('dialogflow-fulfillment');
 
-// Inicializa Firebase Admin SDK
-admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    databaseURL: "https://chatbot-d9174.firebaseio.com",
-});
-
-// Obtiene la referencia de la base de datos de Firestore
+admin.initializeApp();
 const db = admin.firestore();
 
-// Función para guardar la interacción del usuario
-async function saveInteraction(userEmail, userMessage) {
-    const fechaActual = admin.firestore.Timestamp.now();
-    
-    // Guarda la interacción en la colección "interacciones"
-    await db.collection('interacciones').add({
-        email: userEmail,
-        userMessage: userMessage,
-        timestamp: fechaActual,
-    });
-}
-
-// Función principal que maneja las peticiones de Dialogflow
 exports.chatbot = functions.https.onRequest(async (request, response) => {
     const agent = new WebhookClient({ request, response });
 
-    // Función para manejar el saludo
-    async function handleGreeting(agent) {
-        const email = agent.originalDetectIntentRequest.payload.data.sender.id; // Cambia esto según cómo obtengas el email del usuario
-        const userMessage = agent.query; // Captura el mensaje del usuario
-    
-        try {
-            // Busca al usuario en Firestore por su email
-            const snapshot = await db.collection("Cliente").where("email", "==", email).get();
-    
-            if (!snapshot.empty) {
-                // Si el usuario existe, actualiza el motivo con el mensaje del usuario
-                const userDoc = snapshot.docs[0]; // Obtiene el documento del usuario
-                await userDoc.ref.update({
-                    motivo: userMessage, // Actualiza el motivo con el mensaje del usuario
-                    ultima_interaccion: admin.firestore.Timestamp.now() // Actualiza la fecha de la última interacción
-                });
-                agent.add(`Tu motivo ha sido actualizado a '${userMessage}'.`);
-            } else {
-                // Si el usuario no existe, puedes manejarlo aquí (opcional)
-                console.log("Usuario no encontrado.");
-                agent.add("No te he encontrado en nuestra base de datos. Por favor, proporciona tu correo para registrarte.");
-            }
-        } catch (error) {
-            console.error("Error al guardar la interacción:", error);
-            agent.add("Hubo un error al guardar tu interacción.");
-        }
-    }
-
-    function requestEmail(agent) {
-        const email = agent.parameters.email; // Accede al parámetro email
-        console.log("Email recibido:", email); // Verifica si el email es correcto
-    
+    // Función para pedir y verificar el correo electrónico
+    async function requestEmail(agent) {
+        const email = agent.parameters.email; // Accede al parámetro de email
         if (!email) {
             agent.add("Lo siento, parece que no recibí tu correo electrónico.");
             return;
         }
-    
-        // Aquí puedes buscar al usuario en Firestore
-        return admin.firestore().collection('Cliente').where('email', '==', email).get()
-            .then(snapshot => {
-                if (snapshot.empty) {
-                    agent.add("Correo no registrado, ¿me podrías decir tu nombre?");
-                    // Establecer contexto con el email
-                    agent.context.set({
-                        name: 'esperar_nombre',
-                        lifespan: 5,
-                        parameters: { email: email } // Pasar el email al contexto
-                    });
-                } else {
-                    // Procesa el usuario encontrado
-                    const userDoc = snapshot.docs[0]; // Obtiene el documento
-                    const user = userDoc.data();
-                    agent.add(`Hola ${user.nombre}, bienvenido de nuevo.`);
-                    const fechaActual = admin.firestore.Timestamp.now();
-                    return userDoc.ref.update({
-                        ultima_interaccion: fechaActual
-                    });
-                }
-            })
-            .catch(error => {
-                console.error("Error al buscar usuario:", error);
-                agent.add("Hubo un error al procesar tu solicitud.");
-            });
+
+        // Busca el correo en la colección 'Cliente'
+        try {
+            const snapshot = await db.collection('Cliente').where('email', '==', email).get();
+            if (snapshot.empty) {
+                agent.add("Correo no registrado, ¿me podrías decir tu nombre?");
+                // Guarda el email en el contexto para uso posterior
+                agent.context.set({
+                    name: 'esperar_nombre',
+                    lifespan: 5,
+                    parameters: { email: email }
+                });
+            } else {
+                const userDoc = snapshot.docs[0];
+                const user = userDoc.data();
+                agent.add(`Hola ${user.nombre}, bienvenido de nuevo.`);
+                
+                // Actualiza la última interacción del usuario
+                await userDoc.ref.update({
+                    ultima_interaccion: admin.firestore.Timestamp.now()
+                });
+            }
+        } catch (error) {
+            console.error("Error al buscar usuario:", error);
+            agent.add("Hubo un error al procesar tu solicitud.");
+        }
     }
-    
+
+    // Función para pedir el nombre y registrar el usuario si es nuevo
     async function requestName(agent) {
         const name = agent.parameters['given-name'];
         const email = agent.context.get('esperar_nombre') ? agent.context.get('esperar_nombre').parameters.email : null;
-        const fechaActual = admin.firestore.Timestamp.now();
-    
-        if (!name || name.trim() === "") {
+        
+        if (!name) {
             agent.add("No he entendido tu nombre, ¿puedes repetirlo?");
             return;
         }
-    
-        const newUser = { nombre: name, email: email, motivo: "Sin interaccion", fecha: fechaActual, ultima_interaccion: fechaActual };
-    
+
+        const newUser = {
+            nombre: name,
+            email: email,
+            motivo: "Sin interaccion",
+            fecha: admin.firestore.Timestamp.now(),
+            ultima_interaccion: admin.firestore.Timestamp.now()
+        };
+
         try {
             const snapshot = await db.collection("Cliente").where("email", "==", email).get();
             if (snapshot.empty) {
                 await db.collection("Cliente").add(newUser);
                 agent.add(`Gracias ${newUser.nombre}, te hemos registrado con éxito.`);
             } else {
-                await db.collection("Cliente").doc(snapshot.docs[0].id).update({
-                    ultima_interaccion: fechaActual
+                const userDoc = snapshot.docs[0];
+                await userDoc.ref.update({
+                    ultima_interaccion: newUser.ultima_interaccion
                 });
                 agent.add("Hola, bienvenido de nuevo.");
             }
-            agent.setFollowupEvent({ name: 'Saludar', parameters: {} });
         } catch (error) {
             console.error("Error al registrar usuario: ", error);
             agent.add("Lo siento, hubo un error al registrar tu información.");
         }
-    }    
+    }
+
+    // Función para Default Fallback Intent
+    async function fallback(agent) {
+        const emailContext = agent.context.get('esperar_nombre');
+        const email = emailContext ? emailContext.parameters.email : null;
+        const mensaje = agent.query; // Captura el mensaje de fallback
+
+        if (!email) {
+            agent.add("No he podido identificarte. ¿Podrías proporcionarme tu correo?");
+            return;
+        }
+
+        try {
+            const snapshot = await db.collection("Cliente").where("email", "==", email).get();
+            if (!snapshot.empty) {
+                const userDoc = snapshot.docs[0];
+                // Guarda el mensaje en el registro del usuario
+                await db.collection("Cliente").doc(userDoc.id).update({
+                    ultima_interaccion: admin.firestore.Timestamp.now(),
+                    ultimo_mensaje: mensaje
+                });
+                agent.add("He registrado tu mensaje para poder ayudarte en el futuro.");
+            } else {
+                agent.add("Aún no tengo tu registro completo. ¿Puedes confirmarme tu nombre?");
+            }
+        } catch (error) {
+            console.error("Error en Fallback Intent:", error);
+            agent.add("Lo siento, hubo un error al procesar tu solicitud.");
+        }
+    }
 
     let intentMap = new Map();
-    intentMap.set("Saludar", handleGreeting);
     intentMap.set("PedirCorreo", requestEmail);  
     intentMap.set("PedirNombre", requestName);  
+    intentMap.set("Default Fallback Intent", fallback);
 
     agent.handleRequest(intentMap);
 });
+
 
 
 // Función para validar email
