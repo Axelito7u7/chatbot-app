@@ -84,12 +84,13 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
         const emailContext = agent.context.get('esperar_nombre');
         const email = emailContext ? emailContext.parameters.email : null;
         const mensaje = agent.query; // Captura el mensaje de fallback
-
+    
         if (!email) {
+            // Solo pedimos el correo si aún no lo tenemos
             agent.add("No he podido identificarte. ¿Podrías proporcionarme tu correo?");
             return;
         }
-
+    
         try {
             const snapshot = await db.collection("Cliente").where("email", "==", email).get();
             if (!snapshot.empty) {
@@ -108,6 +109,7 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
             agent.add("Lo siento, hubo un error al procesar tu solicitud.");
         }
     }
+    
 
     let intentMap = new Map();
     intentMap.set("PedirCorreo", requestEmail);  
