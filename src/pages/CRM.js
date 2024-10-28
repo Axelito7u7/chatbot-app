@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { db } from '../recursos/firebase';
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { Trash2 } from 'react-feather';
 import Footer from '../componentes/footer';
 
@@ -11,7 +11,7 @@ export default function ChatbotCRMTable() {
   const formatFirestoreDate = (timestamp) => {
     if (!timestamp) return "";
     const date = new Date(timestamp.seconds * 1000);
-    return date.toLocaleString(); 
+    return date.toLocaleString();
   };
 
   useEffect(() => {
@@ -29,15 +29,21 @@ export default function ChatbotCRMTable() {
     fetchCustomers();
   }, []);
 
+  const handleDeleteCustomer = async (id) => {
+    try {
+      await deleteDoc(doc(db, "Cliente", id));
+      setCustomers(customers.filter(customer => customer.id !== id));
+      console.log("Customer deleted successfully");
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+    }
+  };
+
   const filteredCustomers = customers.filter(customer =>
     Object.values(customer).some(value =>
-      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
-
-  const handleDeleteCustomer = (id) => {
-    console.log("Delete customer", id);
-  };
 
   return (
     <div className="min-h-full">
@@ -67,19 +73,25 @@ export default function ChatbotCRMTable() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredCustomers.map((customer) => (
-                    <tr key={customer.id}>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{customer.nombre}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{customer.email}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{formatFirestoreDate(customer.ultima_interaccion)}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{customer.motivo}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                        <button onClick={() => handleDeleteCustomer(customer.id)} className="text-red-600 hover:text-red-900 ml-2">
-                          <Trash2 className="inline h-5 w-5" />
-                        </button>
-                      </td>
+                  {filteredCustomers.length > 0 ? (
+                    filteredCustomers.map((customer) => (
+                      <tr key={customer.id}>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{customer.nombre}</td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{customer.email}</td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{formatFirestoreDate(customer.ultima_interaccion)}</td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{customer.motivo}</td>
+                        <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                          <button onClick={() => handleDeleteCustomer(customer.id)} className="text-red-600 hover:text-red-900 ml-2">
+                            <Trash2 className="inline h-5 w-5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" className="px-6 py-4 text-center text-sm text-gray-500">No se encontraron clientes.</td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>

@@ -7,43 +7,102 @@ const db = admin.firestore();
 
 exports.chatbot = functions.https.onRequest(async (request, response) => {
     const agent = new WebhookClient({ request, response });
+    //codigo para poder reconocer reconocer los mensajes de los intent
+    async function guardarMotivo(email, motivo) {
+        try {
+            const snapshot = await db.collection("Cliente").where("email", "==", email).get();
+            if (!snapshot.empty) {
+                const userDoc = snapshot.docs[0];
+                await db.collection("Cliente").doc(userDoc.id).update({
+                    motivo: motivo // Solo guarda el motivo
+                });
+                console.log("Motivo guardado en el campo 'motivo'");
+            } else {
+                console.log("Usuario no encontrado para guardar el motivo.");
+            }
+        } catch (error) {
+            console.error("Error al guardar motivo en Firestore:", error);
+        }
+    }
 
-    // Función para pedir y verificar el correo electrónico
-    async function requestEmail(agent) {
-        const email = agent.parameters.email; // Accede al parámetro de email
+    async function fallback(agent) {
+        const emailContext = agent.context.get('email_registrado'); // Contexto que indica que ya tenemos el correo
+        const email = emailContext ? emailContext.parameters.email : null;
+        const mensaje = agent.query; // Captura el mensaje de fallback
+    
+        if (!email) {
+            // Si aún no tenemos el correo, pedimos que el usuario lo proporcione
+            agent.add("No he podido identificarte. ¿Podrías proporcionarme tu correo?");
+            
+            // Guardamos el contexto para recordar la solicitud de correo
+            agent.context.set({
+                name: 'esperar_nombre',
+                lifespan: 5
+            });
+            return;
+        }
+    
+        try {
+            const snapshot = await db.collection("Cliente").where("email", "==", email).get();
+            if (!snapshot.empty) {
+                const userDoc = snapshot.docs[0];
+                // Guarda el mensaje en los campos 'motivo' y 'no_pudimos_contestar'
+                await db.collection("Cliente").doc(userDoc.id).update({
+                    ultima_interaccion: admin.firestore.Timestamp.now(),
+                    motivo: mensaje, // Guarda el motivo en Firestore
+                    no_pudimos_contestar: mensaje // Guarda el mensaje también en 'no_pudimos_contestar'
+                });
+                agent.add("No puedo ayudarte con eso alguna otra cosa.");
+            } else {
+                agent.add("Aún no tengo tu registro completo. ¿Puedes confirmarme tu nombre?");
+            }
+        } catch (error) {
+            console.error("Error en Fallback Intent:", error);
+            agent.add("Lo siento, hubo un error al procesar tu solicitud.");
+        }
+    }
+    
+    
+    function requestEmail(agent) {
+        const email = agent.parameters.email;
+        console.log("Email recibido:", email);
+    
         if (!email) {
             agent.add("Lo siento, parece que no recibí tu correo electrónico.");
             return;
         }
-
-        // Busca el correo en la colección 'Cliente'
-        try {
-            const snapshot = await db.collection('Cliente').where('email', '==', email).get();
-            if (snapshot.empty) {
-                agent.add("Correo no registrado, ¿me podrías decir tu nombre?");
-                // Guarda el email en el contexto para uso posterior
-                agent.context.set({
-                    name: 'esperar_nombre',
-                    lifespan: 5,
-                    parameters: { email: email }
-                });
-            } else {
-                const userDoc = snapshot.docs[0];
-                const user = userDoc.data();
-                agent.add(`Hola ${user.nombre}, bienvenido de nuevo.`);
-                
-                // Actualiza la última interacción del usuario
-                await userDoc.ref.update({
-                    ultima_interaccion: admin.firestore.Timestamp.now()
-                });
-            }
-        } catch (error) {
-            console.error("Error al buscar usuario:", error);
-            agent.add("Hubo un error al procesar tu solicitud.");
-        }
+    
+        return admin.firestore().collection('Cliente').where('email', '==', email).get()
+            .then(snapshot => {
+                if (snapshot.empty) {
+                    agent.add("Correo no registrado, ¿me podrías decir tu nombre?");
+                    agent.context.set({
+                        name: 'esperar_nombre',
+                        lifespan: 5,
+                        parameters: { email: email }
+                    });
+                } else {
+                    const userDoc = snapshot.docs[0];
+                    const user = userDoc.data();
+                    agent.add(`Hola ${user.nombre}, bienvenido de nuevo.`);
+                    
+                    agent.context.set({  // Nuevo contexto indicando que ya tenemos el correo
+                        name: 'email_registrado',
+                        lifespan: 5,
+                        parameters: { email: email }
+                    });
+    
+                    return userDoc.ref.update({
+                        ultima_interaccion: admin.firestore.Timestamp.now()
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error al buscar usuario:", error);
+                agent.add("Hubo un error al procesar tu solicitud.");
+            });
     }
-
-    // Función para pedir el nombre y registrar el usuario si es nuevo
+    
     async function requestName(agent) {
         const name = agent.parameters['given-name'];
         const email = agent.context.get('esperar_nombre') ? agent.context.get('esperar_nombre').parameters.email : null;
@@ -78,43 +137,58 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
             agent.add("Lo siento, hubo un error al registrar tu información.");
         }
     }
-
-    // Función para Default Fallback Intent
-    async function fallback(agent) {
-        const emailContext = agent.context.get('esperar_nombre');
+    //functions normales
+    async function Helpregistro(agent) {
+        const emailContext = agent.context.get('email_registrado');
         const email = emailContext ? emailContext.parameters.email : null;
-        const mensaje = agent.query; // Captura el mensaje de fallback
+        const motivo = "registro"; 
     
         if (!email) {
-            // Solo pedimos el correo si aún no lo tenemos
-            agent.add("No he podido identificarte. ¿Podrías proporcionarme tu correo?");
+            agent.context.set({
+                name: 'esperar_nombre',
+                lifespan: 5
+            });
             return;
         }
+        await guardarMotivo(email, motivo);
+    }
+    async function NuestrasVentajas(agent){
+        const emailContext = agent.context.get('email_registrado');
+        const email = emailContext ? emailContext.parameters.email : null;
+        const motivo = "Ventajas"; 
     
-        try {
-            const snapshot = await db.collection("Cliente").where("email", "==", email).get();
-            if (!snapshot.empty) {
-                const userDoc = snapshot.docs[0];
-                // Guarda el mensaje en el registro del usuario
-                await db.collection("Cliente").doc(userDoc.id).update({
-                    ultima_interaccion: admin.firestore.Timestamp.now(),
-                    ultimo_mensaje: mensaje
-                });
-                agent.add("He registrado tu mensaje para poder ayudarte en el futuro.");
-            } else {
-                agent.add("Aún no tengo tu registro completo. ¿Puedes confirmarme tu nombre?");
-            }
-        } catch (error) {
-            console.error("Error en Fallback Intent:", error);
-            agent.add("Lo siento, hubo un error al procesar tu solicitud.");
+        if (!email) {
+            agent.context.set({
+                name: 'esperar_nombre',
+                lifespan: 5
+            });
+            return;
         }
+        await guardarMotivo(email, motivo);
+    }
+    async function OfertaEducativa(agent){
+        const emailContext = agent.context.get('email_registrado');
+        const email = emailContext ? emailContext.parameters.email : null;
+        const motivo = "Oferta educativa"; 
+    
+        if (!email) {
+            agent.context.set({
+                name: 'esperar_nombre',
+                lifespan: 5
+            });
+            return;
+        }
+        await guardarMotivo(email, motivo);
     }
     
-
     let intentMap = new Map();
     intentMap.set("PedirCorreo", requestEmail);  
     intentMap.set("PedirNombre", requestName);  
     intentMap.set("Default Fallback Intent", fallback);
+    //intents normales
+    intentMap.set("Helpregistro", Helpregistro);
+    intentMap.set("NuestrasVentajas", NuestrasVentajas);
+    intentMap.set("OfertaEducativa", OfertaEducativa);
 
     agent.handleRequest(intentMap);
 });
