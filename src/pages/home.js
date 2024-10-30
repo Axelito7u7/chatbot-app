@@ -168,7 +168,13 @@ export default function Home() {
       </div>
     </div>
   </section>
-
+  <df-messenger
+      chat-icon="https://www.gacelaweb.com/wp-content/uploads/que_es_un_bot_en_internet.jpg"
+      intent="WELCOME"
+      chat-title="ChatBotsito"
+      agent-id="153349d8-b991-48dc-985f-a66e17e9ab56"
+      language-code="es"
+    ></df-messenger>
 
       <footer className="bg-gray-800 py-6">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
