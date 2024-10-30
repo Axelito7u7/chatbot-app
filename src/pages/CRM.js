@@ -144,7 +144,7 @@ export default function ChatbotCRMTable() {
 
             {/* Segunda tabla para interacciones */}
             <div className="mt-4 overflow-x-auto shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-              <h3 className="text-lg font-bold mb-2">Interacciones</h3>
+              <h3 className="text-lg font-bold mb-2">Preguntas sin respuesta</h3>
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
                   <tr>
