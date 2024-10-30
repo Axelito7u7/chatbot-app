@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { db } from '../recursos/firebase';
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { Trash2, Search, Menu, X } from 'lucide-react';
+import { collection, getDocs, updateDoc, doc, deleteDoc } from "firebase/firestore"; // Add deleteDoc here
+import { Trash2, Search } from 'lucide-react';
 import Footer from '../componentes/footer';
-import { Link } from 'react-router-dom';
-import Header from '../componentes/header'
+import Header from '../componentes/header';
 
 export default function ChatbotCRMTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [customers, setCustomers] = useState([]);
+  const [interactions, setInteractions] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const formatFirestoreDate = (timestamp) => {
@@ -29,7 +29,19 @@ export default function ChatbotCRMTable() {
       }
     };
 
+    const fetchInteractions = async () => {
+      try {
+        const interactionsCollection = collection(db, "Cliente"); // Cambia esto según tu colección
+        const interactionsSnapshot = await getDocs(interactionsCollection);
+        const interactionsList = interactionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setInteractions(interactionsList);
+      } catch (error) {
+        console.error("Error fetching interactions:", error);
+      }
+    };
+
     fetchCustomers();
+    fetchInteractions();
   }, []);
 
   const handleDeleteCustomer = async (id) => {
@@ -42,19 +54,35 @@ export default function ChatbotCRMTable() {
     }
   };
 
+  // Nueva función para eliminar el campo no_pudimos_contestar
+  const handleDeleteNoPudimosContestar = async (id) => {
+    try {
+      const interactionDocRef = doc(db, "Cliente", id);
+      await updateDoc(interactionDocRef, {
+        no_pudimos_contestar: '' // Establece el campo como vacío
+      });
+      setInteractions(interactions.map(interaction =>
+        interaction.id === id ? { ...interaction, no_pudimos_contestar: '' } : interaction
+      ));
+      console.log("Campo 'no_pudimos_contestar' eliminado correctamente");
+    } catch (error) {
+      console.error("Error deleting 'no_pudimos_contestar':", error);
+    }
+  };
+
   const filteredCustomers = customers.filter(customer =>
     Object.values(customer).some(value =>
       value && value.toString().toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const filteredInteractions = interactions.filter(interaction =>
+    interaction.no_pudimos_contestar // Filtra solo las interacciones con 'no_pudimos_contestar'
+  );
 
   return (
     <div className="min-h-screen flex flex-col">
-       <Header />
+      <Header />
       <main className="flex-grow">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 sm:px-0">
@@ -73,7 +101,8 @@ export default function ChatbotCRMTable() {
             </div>
 
             <div className="mt-4 overflow-x-auto shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
+              <h3 className="text-lg font-bold mb-2">Lista de Clientes</h3>
+              <table className="min-w-full divide-y divide-gray-300 mb-4">
                 <thead className="bg-gray-50">
                   <tr>
                     <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Nombre</th>
@@ -112,10 +141,49 @@ export default function ChatbotCRMTable() {
                 </tbody>
               </table>
             </div>
+
+            {/* Segunda tabla para interacciones */}
+            <div className="mt-4 overflow-x-auto shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+              <h3 className="text-lg font-bold mb-2">Interacciones</h3>
+              <table className="min-w-full divide-y divide-gray-300">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Nombre</th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Correo Electrónico</th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">No Pudimos Contestar</th>
+                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                      <span className="sr-only">Acciones</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {filteredInteractions.length > 0 ? (
+                    filteredInteractions.map((interaction) => (
+                      <tr key={interaction.id}>
+                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{interaction.nombre}</td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{interaction.email}</td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{interaction.no_pudimos_contestar}</td>
+                        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                          <button 
+                            onClick={() => handleDeleteNoPudimosContestar(interaction.id)} 
+                            className="text-blue-600 hover:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
+                          >
+                            Eliminar
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">No se encontraron interacciones.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </main>
-
       <Footer />
     </div>
   );
