@@ -32,7 +32,7 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
     
         if (!email) {
             // Si aún no tenemos el correo, pedimos que el usuario lo proporcione
-            agent.add("No he podido identificarte. ¿Podrías proporcionarme tu correo?");
+            agent.add("Para guardar mejor tu pregunta puedes proporcionar un correo");
             
             // Guardamos el contexto para recordar la solicitud de correo
             agent.context.set({
@@ -180,6 +180,20 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
         }
         await guardarMotivo(email, motivo);
     }
+    async function SobreNosotros(agent){
+        const emailContext = agent.context.get('email_registrado');
+        const email = emailContext ? emailContext.parameters.email : null;
+        const motivo = "Sobre nosotros"; 
+    
+        if (!email) {
+            agent.context.set({
+                name: 'esperar_nombre',
+                lifespan: 5
+            });
+            return;
+        }
+        await guardarMotivo(email, motivo);
+    }
     
     let intentMap = new Map();
     intentMap.set("PedirCorreo", requestEmail);  
@@ -189,18 +203,10 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
     intentMap.set("Helpregistro", Helpregistro);
     intentMap.set("NuestrasVentajas", NuestrasVentajas);
     intentMap.set("OfertaEducativa", OfertaEducativa);
+    intentMap.set("SobreNosotros", SobreNosotros);
 
     agent.handleRequest(intentMap);
 });
-
-
-
-// Función para validar email
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
 
 /* async function MostrarCategorias(agent) {
     const categoriasRef = db.collection("Categorias");
