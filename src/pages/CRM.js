@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { db } from '../recursos/firebase';
-import { collection, getDocs, updateDoc, doc, deleteDoc } from "firebase/firestore"; // Add deleteDoc here
+import { collection, getDocs, updateDoc, doc, deleteDoc } from "firebase/firestore"; // importacion de las herramientas de firebase
 import { Trash2, Search } from 'lucide-react';
 import Footer from '../componentes/footer';
 import Header from '../componentes/header';
@@ -59,7 +59,7 @@ export default function ChatbotCRMTable() {
     try {
       const interactionDocRef = doc(db, "Cliente", id);
       await updateDoc(interactionDocRef, {
-        no_pudimos_contestar: '' // Establece el campo como vacío
+        no_pudimos_contestar: '' 
       });
       setInteractions(interactions.map(interaction =>
         interaction.id === id ? { ...interaction, no_pudimos_contestar: '' } : interaction
