@@ -91,6 +91,8 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
                 await userDoc.ref.update({
                     ultima_interaccion: admin.firestore.Timestamp.now()
                 });
+
+                agent.setFollowupEvent('Saludar');
             }
         } catch (error) {
             console.error("Error al buscar usuario:", error);
@@ -120,12 +122,7 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
             if (snapshot.empty) {
                 await db.collection("Cliente").add(newUser);
                 agent.add(`Gracias ${newUser.nombre}, te hemos registrado con éxito.`);
-            } else {
-                const userDoc = snapshot.docs[0];
-                await userDoc.ref.update({
-                    ultima_interaccion: newUser.ultima_interaccion
-                });
-                agent.add("Hola, bienvenido de nuevo.");
+                agent.setFollowupEvent('Saludar');
             }
         } catch (error) {
             console.error("Error al registrar usuario: ", error);
@@ -149,10 +146,14 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
     intentMap.set("PedirNombre", requestName);
     intentMap.set("Default Fallback Intent", fallback);
     //intents para guardar el motivo
-    intentMap.set("Helpregistro", (agent) => registrarMotivo(agent, "registro"));
+    intentMap.set("Helpregistro", (agent) => registrarMotivo(agent, "Como se Subcribe"));
     intentMap.set("NuestrasVentajas", (agent) => registrarMotivo(agent, "Ventajas"));
     intentMap.set("OfertaEducativa", (agent) => registrarMotivo(agent, "Oferta educativa"));
     intentMap.set("SobreNosotros", (agent) => registrarMotivo(agent, "Sobre nosotros"));
+    intentMap.set("acerca_mision", (agent) => registrarMotivo(agent, "Sobre nosotros"));
+    intentMap.set("acerca_valores", (agent) => registrarMotivo(agent, "Sobre nosotros"));
+    intentMap.set("acerca_vision", (agent) => registrarMotivo(agent, "Sobre nosotros"));
+    intentMap.set("CursosDisponibles", (agent) => registrarMotivo(agent, "Informacion sobre los cursos"));
 
     agent.handleRequest(intentMap);
 });

@@ -140,7 +140,7 @@ export default function Home() {
               </div>
               <div className="relative aspect-video">
                 <img
-                  src="/imagenes/digital-business-future.jpg"
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDFPB3MGgULXnCeuJB_YMcmK4_fDolMigd9w&s"
                   alt="Master your future in Digital Business"
                   className="w-full h-full object-cover rounded-lg shadow-xl"
                 />
