@@ -114,10 +114,6 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-
-        <div className="mt-8 pt-8 text-center text-sm border-t border-blue-700">
-          <p>Todos los derechos reservados © {new Date().getFullYear()}</p>
-        </div>
       </div>
     </footer>
   )
