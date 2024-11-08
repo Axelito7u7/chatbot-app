@@ -4,12 +4,14 @@ import { collection, getDocs, updateDoc, doc, deleteDoc } from "firebase/firesto
 import { Trash2, Search } from 'lucide-react';
 import Footer from '../componentes/footer';
 import Header from '../componentes/header';
+import EmailModal from '../componentes/modalEmail'
 
 export default function ChatbotCRMTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [customers, setCustomers] = useState([]);
   const [interactions, setInteractions] = useState([]);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);  // Definido estado para el modal
+  const [currentCustomer, setCurrentCustomer] = useState(null);  // Definido estado para el cliente actual
 
   const formatFirestoreDate = (timestamp) => {
     if (!timestamp) return "";
@@ -80,6 +82,16 @@ export default function ChatbotCRMTable() {
     interaction.no_pudimos_contestar // Filtra solo las interacciones con 'no_pudimos_contestar'
   );
 
+  const handleOpenModal = (customer) => {
+    setCurrentCustomer(customer);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setCurrentCustomer(null);
+  };
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -164,27 +176,43 @@ export default function ChatbotCRMTable() {
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{interaction.email}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{interaction.no_pudimos_contestar}</td>
                         <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                          <button 
-                            onClick={() => handleDeleteNoPudimosContestar(interaction.id)} 
-                            className="text-blue-600 hover:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
+                          <button
+                            onClick={() => handleDeleteNoPudimosContestar(interaction.id)}
+                            className="text-red-600 hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md"
                           >
                             Eliminar
+                          </button>
+                        </td>
+                        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                          <button 
+                            onClick={() => handleOpenModal(interaction)} 
+                            className="text-blue-600 hover:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
+                          >
+                            Enviar Correo
                           </button>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">No se encontraron interacciones.</td>
+                      <td colSpan={4} className="px-6 py-4 text-center text-sm text-gray-500">No se encontraron interacciones sin respuesta.</td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
+
           </div>
         </div>
       </main>
       <Footer />
+      {isModalOpen && currentCustomer && (
+        <EmailModal 
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          customer={currentCustomer}
+        />
+      )}
     </div>
   );
 }

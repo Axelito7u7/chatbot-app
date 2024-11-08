@@ -1,9 +1,44 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const { WebhookClient } = require('dialogflow-fulfillment');
-
+const { Resend } = require('resend');
+const cors = require('cors')({ origin: true }); // Esto permite solicitudes desde cualquier origen
+const resend = new Resend('re_UxMTbPaB_33oXE4CApq1KZds45wTKKfHW'); //clave de Resend
 admin.initializeApp();
 const db = admin.firestore();
+
+exports.sendEmail = functions.https.onRequest((req, res) => {
+  // Activar CORS antes de procesar la solicitud
+  cors(req, res, async () => {
+    if (req.method === 'POST') {
+      const { to, subject, body } = req.body;
+
+      // Validar que los datos requeridos estén presentes
+      if (!to || !subject || !body) {
+        return res.status(400).json({ message: 'Faltan datos requeridos (to, subject, body)' });
+      }
+
+      try {
+        // Enviar el correo usando Resend
+        const emailResponse = await resend.emails.send({
+          from: 'galvanflores102@gmail.com',
+          to,
+          subject,
+          html: `<p>${body}</p>`,
+        });
+
+        // Enviar respuesta exitosa
+        res.status(200).json({ message: 'Correo enviado correctamente', emailResponse });
+      } catch (error) {
+        console.error('Error al enviar el correo:', error);
+        res.status(500).json({ message: 'Error al enviar el correo', error: error.message });
+      }
+    } else {
+      // Si el método no es POST, devolver un error 405
+      res.status(405).json({ message: 'Método no permitido' });
+    }
+  });
+});
 
 exports.chatbot = functions.https.onRequest(async (request, response) => {
     const agent = new WebhookClient({ request, response });
@@ -50,7 +85,7 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
                     motivo: mensaje,
                     no_pudimos_contestar: mensaje
                 });
-                agent.add("No puedo ayudarte con eso, ¿te gustaría preguntar algo más?");
+                agent.add("No puedo ayudarte con eso, ¿te gustaría preguntar algo más? escribe help");
             } else {
                 agent.add("Aún no tengo tu registro completo. ¿Puedes confirmarme tu nombre?");
             }
@@ -91,7 +126,6 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
                 await userDoc.ref.update({
                     ultima_interaccion: admin.firestore.Timestamp.now()
                 });
-
                 agent.setFollowupEvent('Saludar');
             }
         } catch (error) {
@@ -150,10 +184,11 @@ exports.chatbot = functions.https.onRequest(async (request, response) => {
     intentMap.set("NuestrasVentajas", (agent) => registrarMotivo(agent, "Ventajas"));
     intentMap.set("OfertaEducativa", (agent) => registrarMotivo(agent, "Oferta educativa"));
     intentMap.set("SobreNosotros", (agent) => registrarMotivo(agent, "Sobre nosotros"));
-    intentMap.set("acerca_mision", (agent) => registrarMotivo(agent, "Sobre nosotros"));
-    intentMap.set("acerca_valores", (agent) => registrarMotivo(agent, "Sobre nosotros"));
-    intentMap.set("acerca_vision", (agent) => registrarMotivo(agent, "Sobre nosotros"));
+    intentMap.set("acerca_mision", (agent) => registrarMotivo(agent, "Sobre nuestra mision"));
+    intentMap.set("acerca_valores", (agent) => registrarMotivo(agent, "Sobre nuestros valores"));
+    intentMap.set("acerca_vision", (agent) => registrarMotivo(agent, "Sobre nuestra vision"));
     intentMap.set("CursosDisponibles", (agent) => registrarMotivo(agent, "Informacion sobre los cursos"));
+    intentMap.set("RedesSociales", (agent) => registrarMotivo(agent, "Informacion sobre nuestras redes"));
 
     agent.handleRequest(intentMap);
 });

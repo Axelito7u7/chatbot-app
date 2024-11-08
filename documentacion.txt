@@ -408,3 +408,23 @@ Hosting URL: https://chatbot-d9174.web.app
 Para enrutar las paginas decargamos la paqueteria de Routers
 
 debemos cambiar el index.js y el app.js
+
+extensiones PS C:\Users\Wendy\Desktop\chatbot-app> npm install @emailjs/browser
+>>
+
+added 1 package, changed 1 package, and audited 1632 packages in 50s
+
+295 packages are looking for funding
+  run `npm fund` for details
+
+14 vulnerabilities (2 low, 2 moderate, 10 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+PS C:\Users\Wendy\Desktop\chatbot-app> npm install @tiptap/react @tiptap/starter-kit @tiptap/extension-underline @tiptap/extension-text-style 
+@tiptap/extension-color
+>>

@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "chatbot-d9174"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }
