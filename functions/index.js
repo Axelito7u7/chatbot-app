@@ -21,7 +21,7 @@ exports.sendEmail = functions.https.onRequest((req, res) => {
       try {
         // Enviar el correo usando Resend
         const emailResponse = await resend.emails.send({
-          from: 'galvanflores102@gmail.com',
+          from: 'onboarding@resend.dev',
           to,
           subject,
           html: `<p>${body}</p>`,
