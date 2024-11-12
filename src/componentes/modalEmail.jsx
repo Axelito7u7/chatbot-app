@@ -27,7 +27,7 @@ const EmailModal = ({ customer, onClose }) => {
 
     const emailData = {
       to: customer.email, // Correo del destinatario
-      subject: `Mensaje de ${contact.name}`, // Asunto
+      subject: `${contact.name}`, // Asunto
       body: contact.message, // Cuerpo del mensaje
     };
 
