@@ -1,12 +1,22 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const { WebhookClient } = require('dialogflow-fulfillment');
-const { Resend } = require('resend');
-const cors = require('cors')({ origin: true }); // Esto permite solicitudes desde cualquier origen
-const resend = new Resend('re_UxMTbPaB_33oXE4CApq1KZds45wTKKfHW'); //clave de Resend
+const nodemailer = require('nodemailer'); // Importa Nodemailer
+const cors = require('cors')({ origin: true }); // Permitir solicitudes desde cualquier origen
+
 admin.initializeApp();
 const db = admin.firestore();
 
+// Configura Nodemailer con el servicio de Gmail
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'denedigalan@gmail.com', // Tu correo electrónico
+    pass: 'aorw zyal ocfr zwis', // Usa una contraseña de aplicación
+  },
+});
+
+// Función de Firebase para enviar correos electrónicos
 exports.sendEmail = functions.https.onRequest((req, res) => {
   // Activar CORS antes de procesar la solicitud
   cors(req, res, async () => {
@@ -19,15 +29,18 @@ exports.sendEmail = functions.https.onRequest((req, res) => {
       }
 
       try {
-        // Enviar el correo usando Resend
-        const emailResponse = await resend.emails.send({
-          from: 'onboarding@resend.dev',
-          to,
-          subject,
-          html: `<p>${body}</p>`,
-        });
+        // Configura los detalles del correo usando Nodemailer
+        const mailOptions = {
+          from: 'denedigalan@gmail.com', // Dirección de correo del remitente
+          to: to, // Dirección de correo del destinatario
+          subject: subject, // Asunto del correo
+          html: `<p>${body}</p>`, // Cuerpo del correo en formato HTML
+        };
 
-        // Enviar respuesta exitosa
+        // Enviar el correo
+        const emailResponse = await transporter.sendMail(mailOptions);
+
+        // Responder con éxito
         res.status(200).json({ message: 'Correo enviado correctamente', emailResponse });
       } catch (error) {
         console.error('Error al enviar el correo:', error);
@@ -39,6 +52,7 @@ exports.sendEmail = functions.https.onRequest((req, res) => {
     }
   });
 });
+
 
 exports.chatbot = functions.https.onRequest(async (request, response) => {
     const agent = new WebhookClient({ request, response });
